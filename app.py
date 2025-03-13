@@ -65,7 +65,7 @@ if uploaded_file is not None:
         plt.title('Espectro FTIR', pad=10, fontsize=26, fontname='Cambria')
         plt.xlabel('Número de Onda ($\mathregular{cm^-¹}$)', labelpad=17, fontsize=26, fontname='Cambria')
         plt.ylabel('Transmitância Normalizada', labelpad=15, fontsize=28, fontname='Cambria')
-        plt.xticks(np.arange(900, 1500 + 100, 100), fontsize=22, fontname='Cambria')
+        plt.xticks(np.arange(900, 1500 + 100, 100), fontsize=18, fontname='Cambria')
         plt.xlim(1500, 900)
         plt.ylim(dados_intervalo.min().min(), 100)
         plt.yticks(fontsize=18, fontname='Cambria')
