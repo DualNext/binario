@@ -40,7 +40,7 @@ if uploaded_file is not None:
     dados.sort_index(ascending=False, inplace=True)
 
     # Filtrar a faixa de 1800 a 900
-    dados_intervalo = dados.loc[1800:900]
+    dados_intervalo = dados.loc[1500:900]
 
     # Exibir as primeiras cinco linhas do DataFrame na barra lateral
     sidebar.write('Arquivo Carregado!')
