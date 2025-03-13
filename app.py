@@ -70,6 +70,7 @@ if uploaded_file is not None:
         plt.xlim(1500, 900)
         plt.ylim(dados_intervalo.min().min(), 100)
         plt.yticks(fontsize=18, fontname='Cambria')
+        plt.gca().tick_params(axis='y', pad=20)  # Ajusta o espaço entre os rótulos e a linha
         st.pyplot(fig)
 
     # Exibir a mensagem e o botão "Continuar" apenas se for permitido
