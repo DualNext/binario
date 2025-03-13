@@ -134,7 +134,6 @@ if uploaded_file is not None:
             st.pyplot(fig)
 
 else:
-    st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico Multiclasse de Doenças Bovinas</h1>''', unsafe_allow_html=True)
-
+    st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina - Binário</h1>''', unsafe_allow_html=True)
     # Subtítulo (h3)
     st.markdown('''<h3 style="color: white; font-size: 20px;">Carregue um espectro FTIR para análise</h3>''', unsafe_allow_html=True)
