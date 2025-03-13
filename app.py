@@ -67,7 +67,7 @@ if uploaded_file is not None:
         plt.ylabel('Transmitância Normalizada', labelpad=15, fontsize=28, fontname='Cambria')
         plt.xticks(np.arange(900, 1500 + 100, 100), fontsize=22, fontname='Cambria')
         plt.xlim(1500, 900)
-        plt.ylim(100, 80)
+        plt.ylim(80, 100)
         plt.yticks(fontsize=18, fontname='Cambria')
         st.pyplot(fig)
 
