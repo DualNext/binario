@@ -104,7 +104,7 @@ if uploaded_file is not None:
         prob = model.predict_proba(X_pca)[0]
         
         # Definir as classes e probabilidades
-        classes = ['Brucelose', 'Controle']
+        classes = ['Controle', 'Brucelose']
         probabilidade_controle = prob[0] * 100  # Probabilidade de Controle
         probabilidade_bru = prob[1] * 100      # Probabilidade de Brucelose
 
