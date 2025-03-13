@@ -110,9 +110,9 @@ if uploaded_file is not None:
 
         # Definir cores dinamicamente
         if probabilidade_controle > probabilidade_bru:
-            cores = ['green', 'gray']  # Verde para Controle, Cinza para Brucelose
-        else:
             cores = ['gray', 'red']  # Cinza para Controle, Vermelho para Brucelose
+        else:
+            cores = ['green', 'gray']  # Verde para Controle, Cinza para Brucelose
     
         # Exibir o gráfico de barras
         with col1:
