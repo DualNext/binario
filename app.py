@@ -105,12 +105,15 @@ if uploaded_file is not None:
         probabilidade_controle = prob[0] * 100  # Probabilidade de Controle
         probabilidade_bru = prob[1] * 100      # Probabilidade de Brucelose
 
+        # Definir cores dinamicamente
+        if probabilidade_controle > probabilidade_bru:
+            cores = ['green', 'gray']  # Verde para Controle, Cinza para Brucelose
+        else:
+            cores = ['gray', 'red']  # Cinza para Controle, Vermelho para Brucelose
+    
         # Exibir o gráfico de barras
         with col1:
             fig, ax = plt.subplots(figsize=(5, 3))
-            
-            # Definir cores para as barras
-            cores = ['green', 'red']
             
             # Criar gráfico de barras horizontais
             ax.barh(classes, [probabilidade_controle, probabilidade_bru], color=cores)
