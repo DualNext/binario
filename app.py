@@ -108,7 +108,7 @@ if uploaded_file is not None:
             fig, ax = plt.subplots(figsize=(5, 3))
             
             # Definir cores para as barras
-            cores = ['gray', 'red']
+            cores = ['green', 'red']
             
             # Criar gráfico de barras horizontais
             ax.barh(classes, [probabilidade_controle, probabilidade_bru], color=cores)
