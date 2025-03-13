@@ -80,25 +80,23 @@ if uploaded_file is not None:
     # Exibir o gráfico de barras apenas após o botão ser pressionado
     if not st.session_state.show_button:
         # Carregar os modelos
-        model1 = load_model('model1.keras')
-        model2 = load_model('model2.keras')
-        
-        # Pré-tratamento (SG)
-        dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
+        model = load_model('model.pkl')
+        pca   = load_model('pca.pkl')
 
-        # Pré-tratamento (SNV)
+        # Pré-tratamento (SG/SNV)
+        dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
+        
         scaler = StandardScaler()
         dados_norm = scaler.fit_transform(dados_filtrado)
+
         X = np.transpose(dados_norm)  # Matriz
         X = X.reshape((X.shape[0], X.shape[1]))
 
         # Fazer previsões com os modelos
-        prob1 = model1.predict(X)[0]
-        prob2 = model2.predict(X)[0]
+        prob = model.predict(X)[0]
         
         # Determinar as classes e as probabilidades para os dois modelos
-        classes_model1 = ['Controle', 'Positivo']
-        classes_model2 = ['Brucelose', 'Tuberculose']
+        classes_model = ['Controle', 'Brucelose']
 
         # Probabilidades para as classes do primeiro modelo (Controle/Positivo)
         probabilidade_controle = prob1[0] * 100  # Probabilidade de Controle
