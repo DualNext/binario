@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import mplcyberpunk
 from sklearn.preprocessing import StandardScaler
 from scipy.signal import savgol_filter
-from tensorflow.keras.models import load_model
 
 # Criação da barra lateral
 sidebar = st.sidebar
+
 # Adicionar logo à barra lateral
 logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
@@ -79,58 +79,50 @@ if uploaded_file is not None:
 
     # Exibir o gráfico de barras apenas após o botão ser pressionado
     if not st.session_state.show_button:
-        # Carregar os modelos
-        model = load_model('model.pkl')
-        pca   = load_model('pca.pkl')
+        # Carregar os modelos treinados (PCA e SVM)
+        with open('pca.pkl', 'rb') as f:
+            pca = pickle.load(f)
 
-        # Pré-tratamento (SG/SNV)
+        with open('model.pkl', 'rb') as f:
+            model = pickle.load(f)
+
+        # Pré-tratamento (Savitzky-Golay + Normalização)
         dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
         
         scaler = StandardScaler()
         dados_norm = scaler.fit_transform(dados_filtrado)
 
-        X = np.transpose(dados_norm)  # Matriz
-        X = X.reshape((X.shape[0], X.shape[1]))
+        # Aplicar PCA
+        X_pca = pca.transform(dados_norm)
 
-        # Fazer previsões com os modelos
-        prob = model.predict(X)[0]
+        # Fazer previsões com SVM
+        prob = model.predict_proba(X_pca)[0]
         
-        # Determinar as classes e as probabilidades para os dois modelos
-        classes_model = ['Controle', 'Brucelose']
-
-        # Probabilidades para as classes do primeiro modelo (Controle/Positivo)
-        probabilidade_controle = prob1[0] * 100  # Probabilidade de Controle
-        probabilidade_doente = prob1[1] * 100    # Probabilidade de Positivo
-
-        # Se for "Positivo", usar o modelo2 para prever Brucelose/Tuberculose
-        if probabilidade_doente > probabilidade_controle:
-            probabilidade_bru = prob2[0] * 100  # Probabilidade de Brucelose
-            probabilidade_tub = prob2[1] * 100  # Probabilidade de Tuberculose
-        else:
-            probabilidade_bru = 0  # Se não for "Positivo", probabilidade de Brucelose é 0
-            probabilidade_tub = 0  # Se não for "Positivo", probabilidade de Tuberculose é 0
+        # Definir as classes e probabilidades
+        classes = ['Controle', 'Brucelose']
+        probabilidade_controle = prob[0] * 100  # Probabilidade de Controle
+        probabilidade_bru = prob[1] * 100      # Probabilidade de Brucelose
 
         # Exibir o gráfico de barras
         with col1:
             fig, ax = plt.subplots(figsize=(5, 3))
             
-            # Definir as cores para as barras
-            cores = ['red' if c == 'Positivo' else 'gray' for c in ['Controle', 'Positivo', 'Brucelose', 'Tuberculose']]
+            # Definir cores para as barras
+            cores = ['gray', 'red']
             
-            # Criar as barras horizontais
-            ax.barh(['Controle', 'Positivo', 'Brucelose', 'Tuberculose'], 
-                    [probabilidade_controle, probabilidade_doente, probabilidade_bru, probabilidade_tub], color=cores)
+            # Criar gráfico de barras horizontais
+            ax.barh(classes, [probabilidade_controle, probabilidade_bru], color=cores)
             
-            # Definir o título e o rótulo do eixo X
+            # Configuração do gráfico
             ax.set_xlabel('Probabilidade (%)', fontsize=12)
             ax.set_title('Distribuição das Probabilidades', fontsize=14)
             ax.set_xlim(0, 100)
             
-            # Adicionar texto nas barras para exibir as porcentagens
-            for i, v in enumerate([probabilidade_controle, probabilidade_doente, probabilidade_bru, probabilidade_tub]):
+            # Adicionar rótulos de porcentagem nas barras
+            for i, v in enumerate([probabilidade_controle, probabilidade_bru]):
                 ax.text(v + 2, i, f"{v:.2f}%", color='white', va='center', fontsize=10)
             
-            # Exibir o gráfico
+            # Exibir gráfico no Streamlit
             st.pyplot(fig)
 
 else:
