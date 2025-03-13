@@ -79,6 +79,7 @@ if uploaded_file is not None:
 
     # Exibir o gráfico de barras apenas após o botão ser pressionado
     if not st.session_state.show_button:
+        
         # Carregar os modelos treinados (PCA e SVM)
         with open('pca.pkl', 'rb') as f:
             pca = pickle.load(f)
@@ -93,7 +94,8 @@ if uploaded_file is not None:
         dados_norm = scaler.fit_transform(dados_filtrado)
 
         # Aplicar PCA
-        X_pca = pca.transform(dados_norm)
+        X = np.transpose(dados_norm)
+        X_pca = pca.transform(X)
 
         # Fazer previsões com SVM
         prob = model.predict_proba(X_pca)[0]
