@@ -47,7 +47,7 @@ if uploaded_file is not None:
     sidebar.dataframe(dados_intervalo.head(5))
 
     # Criar colunas para o gráfico e resultados
-    col1, col2 = st.columns(1)  # Ajuste a proporção conforme necessário
+    col1 = st.columns(1)  # Ajuste a proporção conforme necessário
 
     # Exibir um gráfico de linhas com os dados filtrados na primeira coluna
     with col1:
