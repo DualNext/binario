@@ -84,9 +84,6 @@ if uploaded_file is not None:
     if not st.session_state.show_button:
         
         # Carregar os modelos treinados
-        with open('scaler.pkl', 'rb') as f:
-            scaler = pickle.load(f)
-
         with open('pca.pkl', 'rb') as f:
             pca = pickle.load(f)
             
@@ -98,11 +95,12 @@ if uploaded_file is not None:
         
         dados_filtrados = pd.DataFrame(savgol_filter(dados_intervalo, 27, 1, axis = 0))
         dados_filtrados.index = dados_intervalo.index
-        
-        dados_norm = scaler.transform(dados_filtrados)
+
+        dados_centrados = dados_filtrados - dados_filtrados.mean()
+        dados_tratados = dados_centrados / dados_centrados.std()
 
         # Aplicar PCA
-        X = np.transpose(dados_norm)
+        X = np.transpose(dados_tratados)
         X_pca = pca.transform(X)
 
         # Fazer previsões com SVM
