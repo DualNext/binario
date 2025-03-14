@@ -105,8 +105,8 @@ if uploaded_file is not None:
         
         # Definir as classes e probabilidades
         classes = ['Controle', 'Brucelose']
-        probabilidade_controle = prob[0] * 100  # Probabilidade de Controle
-        probabilidade_bru = prob[1] * 100      # Probabilidade de Brucelose
+        probabilidade_controle = prob[1] * 100  # Probabilidade de Controle
+        probabilidade_bru = prob[0] * 100      # Probabilidade de Brucelose
 
         # Definir cores dinamicamente
         if probabilidade_controle > probabilidade_bru:
