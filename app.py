@@ -96,7 +96,7 @@ if uploaded_file is not None:
         # Pré-tratamento (Savitzky-Golay + Normalização)
         dados_intervalo = dados.loc[1500:900]
         
-        dados_filtrados = savgol_filter(dados_intervalo, 27, 1, axis = 0)
+        dados_filtrados = pd.DataFrame(savgol_filter(dados_intervalo, 27, 1, axis = 0))
         dados_filtrados.index = dados_intervalo.index
         
         dados_norm = scaler.transform(dados_filtrados)
