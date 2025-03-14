@@ -83,19 +83,21 @@ if uploaded_file is not None:
     # Exibir o gráfico de barras apenas após o botão ser pressionado
     if not st.session_state.show_button:
         
-        # Carregar os modelos treinados (PCA e SVM)
+        # Carregar os modelos treinados
+        with open('scaler.pkl', 'rb') as f:
+            scaler = pickle.load(f)
+
         with open('pca.pkl', 'rb') as f:
             pca = pickle.load(f)
-
+            
         with open('model.pkl', 'rb') as f:
             model = pickle.load(f)
 
         # Pré-tratamento (Savitzky-Golay + Normalização)
         dados_intervalo = dados.loc[1500:900]
         dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
-        
-        scaler = StandardScaler()
-        dados_norm = scaler.fit_transform(dados_filtrado)
+
+        dados_norm = scaler.transform(dados_filtrado)
 
         # Aplicar PCA
         X = np.transpose(dados_norm)
