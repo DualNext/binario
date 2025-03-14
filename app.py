@@ -95,8 +95,8 @@ if uploaded_file is not None:
 
         # Pré-tratamento (Savitzky-Golay + Normalização)
         dados_intervalo = dados.loc[1500:900]
-        dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
-        dados_norm = scaler.transform(dados_filtrado)
+        dados_filtrados = savgol_filter(dados_intervalo, 27, 1, axis=0)
+        dados_norm = scaler.transform(dados_filtrados)
 
         # Aplicar PCA
         X = np.transpose(dados_norm)
@@ -134,6 +134,10 @@ if uploaded_file is not None:
             
             # Exibir gráfico no Streamlit
             st.pyplot(fig)
+
+            # Exibir a classe predita junto com as probabilidades
+            classe_predita = classes[np.argmax(prob)]  # Classe com maior probabilidade
+            st.write(f"Diagnóstico: {classe_predita}")
 
 else:
     st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina</h1>''', unsafe_allow_html=True)
