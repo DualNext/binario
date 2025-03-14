@@ -40,7 +40,7 @@ if uploaded_file is not None:
     dados.sort_index(ascending=False, inplace=True)
 
     # Filtrar a faixa de 1800 a 900
-    dados_intervalo = dados.loc[1500:900]
+    dados_intervalo = dados.loc[1800:900]
 
     # Exibir as primeiras cinco linhas do DataFrame na barra lateral
     sidebar.write('Arquivo Carregado!')
@@ -91,6 +91,7 @@ if uploaded_file is not None:
             model = pickle.load(f)
 
         # Pré-tratamento (Savitzky-Golay + Normalização)
+        dados_intervalo = dados.loc[1500:900]
         dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
         
         scaler = StandardScaler()
@@ -104,22 +105,22 @@ if uploaded_file is not None:
         prob = model.predict_proba(X_pca)[0]
         
         # Definir as classes e probabilidades
-        classes = ['Controle', 'Brucelose']
-        probabilidade_controle = prob[1] * 100  # Probabilidade de Controle
-        probabilidade_bru = prob[0] * 100      # Probabilidade de Brucelose
+        classes = ['Brucelose', 'Controle']
+        probabilidade_bru = prob[0] * 100  # Probabilidade de Brucelose
+        probabilidade_controle = prob[1] * 100       # Probabilidade de Controle
 
         # Definir cores dinamicamente
-        if probabilidade_controle > probabilidade_bru:
-            cores = ['gray', 'green']  # Cinza para Controle, Vermelho para Brucelose
+        if probabilidade_bru > probabilidade_controle:
+            cores = ['red', 'gray']  # Vermelho para Brucelose, Cinza para Controle
         else:
-            cores = ['red', 'gray']  # Verde para Controle, Cinza para Brucelose
+            cores = ['gray', 'green']  # Cinza para Brucelose, Verde para Controle
     
         # Exibir o gráfico de barras
         with col1:
             fig, ax = plt.subplots(figsize=(5, 3))
             
             # Criar gráfico de barras horizontais
-            ax.barh(classes, [probabilidade_controle, probabilidade_bru], color=cores)
+            ax.barh(classes, [probabilidade_bru, probabilidade_controle], color=cores)
             
             # Configuração do gráfico
             ax.set_xlabel('Probabilidade (%)', fontsize=12)
@@ -127,13 +128,13 @@ if uploaded_file is not None:
             ax.set_xlim(0, 100)
             
             # Adicionar rótulos de porcentagem nas barras
-            for i, v in enumerate([probabilidade_controle, probabilidade_bru]):
+            for i, v in enumerate([probabilidade_bru, probabilidade_controle]):
                 ax.text(v + 2, i, f"{v:.2f}%", color='white', va='center', fontsize=10)
             
             # Exibir gráfico no Streamlit
             st.pyplot(fig)
 
 else:
-    st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina - Binário</h1>''', unsafe_allow_html=True)
+    st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina</h1>''', unsafe_allow_html=True)
     # Subtítulo (h3)
     st.markdown('''<h3 style="color: white; font-size: 20px;">Carregue um espectro FTIR para análise</h3>''', unsafe_allow_html=True)
