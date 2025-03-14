@@ -96,7 +96,6 @@ if uploaded_file is not None:
         # Pré-tratamento (Savitzky-Golay + Normalização)
         dados_intervalo = dados.loc[1500:900]
         dados_filtrado = savgol_filter(dados_intervalo, 27, 1, axis=0)
-
         dados_norm = scaler.transform(dados_filtrado)
 
         # Aplicar PCA
