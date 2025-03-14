@@ -40,11 +40,11 @@ if uploaded_file is not None:
     dados.sort_index(ascending=False, inplace=True)
 
     # Filtrar a faixa de 1800 a 900
-    dados_intervalo = dados.loc[1800:900]
+    dados_coletados = dados.loc[1800:900]
 
     # Exibir as primeiras cinco linhas do DataFrame na barra lateral
     sidebar.write('Arquivo Carregado!')
-    sidebar.dataframe(dados_intervalo.head(5))
+    sidebar.dataframe(dados_coletados.head(5))
 
     # Criar colunas para o gráfico e resultados
     col1 = st.columns(1)[0]  # Pegando a primeira (e única) coluna
@@ -55,7 +55,7 @@ if uploaded_file is not None:
         plt.style.use("cyberpunk")
 
         # Criar sua linha
-        plt.plot(dados_intervalo, lw=2, color='green')  # Linha na cor verde
+        plt.plot(dados_coletados, lw=2, color='green')  # Linha na cor verde
 
         # Adicionar efeitos de brilho
         mplcyberpunk.add_glow_effects()
