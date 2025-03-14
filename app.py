@@ -68,7 +68,7 @@ if uploaded_file is not None:
         plt.xticks(np.arange(900, 1800 + 100, 100), fontsize=18, fontname='Cambria')
         plt.gca().tick_params(axis='x', pad=20)  # Ajusta o espaço entre os rótulos e a linha
         plt.xlim(1800, 900)
-        plt.ylim(dados_coletados.min().min() - 1, 101)
+        plt.ylim(dados_coletados.min().min() - 0.5, 100.5)
         plt.yticks(fontsize=18, fontname='Cambria')
         plt.gca().tick_params(axis='y', pad=20)  # Ajusta o espaço entre os rótulos e a linha
         st.pyplot(fig)
