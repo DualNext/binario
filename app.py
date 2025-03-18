@@ -120,7 +120,7 @@ if uploaded_file is not None:
         # Exibir gráfico de pizza com as probabilidades
         fig, ax = plt.subplots(figsize=(4, 4))
         ax.pie([probabilidade_bru, probabilidade_controle], labels=classes, autopct='%1.2f%%', startangle=90, colors=cores)
-        ax.set_title('Distribuição das Probabilidades', fontsize=14)
+        ax.set_title('Probabilidades de Diagnóstico', fontsize=14)
         st.pyplot(fig)
 
 else:
