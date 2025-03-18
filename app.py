@@ -14,11 +14,13 @@ sidebar = st.sidebar
 logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
-# Adicionar um pequeno espaçamento após a logo para o botão
-sidebar.markdown("<br><br>", unsafe_allow_html=True)
+# Ajuste do espaçamento menor entre a logo e o botão de upload
+sidebar.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
 
-# **Botão de upload (um único para ambas as análises)**
+# Texto logo abaixo da logo, mas ainda perto
 sidebar.markdown("### Carregue o espectro FTIR para análise", unsafe_allow_html=True)
+
+# Botão de upload
 uploaded_file = sidebar.file_uploader("", type="csv")
 
 # Criar abas
