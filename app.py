@@ -74,11 +74,11 @@ if uploaded_file is not None:
             plt.gca().tick_params(axis='y', pad=20)  # Ajusta o espaço entre os rótulos e a linha
             st.pyplot(fig)
 
-        # Exibir a mensagem e o botão "Continuar" apenas se for permitido
-        st.info('Espectro medido corretamente! Clique em "continuar"')
+    # Exibir a mensagem e o botão "Continuar" apenas se for permitido
+    st.info('Espectro medido corretamente! Clique em "continuar"')
 
-        if st.button('Continuar'):
-            st.session_state.show_button = False  # Ocultar mensagem e botão após o clique
+    if st.button('Continuar'):
+        st.session_state.show_button = False  # Ocultar mensagem e botão após o clique
 
     # Exibir o gráfico de pizza com as probabilidades após o botão ser pressionado
     if not st.session_state.show_button:
