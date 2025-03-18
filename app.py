@@ -14,11 +14,12 @@ sidebar = st.sidebar
 logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
-# Adicionar espaço entre a logo e o botão de upload
+# Adicionar um pequeno espaçamento após a logo para o botão
 sidebar.markdown("<br><br>", unsafe_allow_html=True)
 
 # **Botão de upload (um único para ambas as análises)**
-uploaded_file = sidebar.file_uploader("Carregue o espectro FTIR para análise", type="csv")
+sidebar.markdown("### Carregue o espectro FTIR para análise", unsafe_allow_html=True)
+uploaded_file = sidebar.file_uploader("", type="csv")
 
 # Criar abas
 tab1, tab2 = st.tabs(["Diagnóstico de Brucelose", "Outra Análise"])
