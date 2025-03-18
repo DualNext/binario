@@ -15,7 +15,7 @@ logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
 # Ajuste do espaçamento menor entre a logo e o botão de upload
-sidebar.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
+# sidebar.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
 
 # Botão de upload
 uploaded_file = sidebar.file_uploader("", type="csv")
