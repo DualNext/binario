@@ -15,7 +15,7 @@ logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
 # Ajuste do espaçamento menor entre a logo e o botão de upload
-sidebar.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
+sidebar.markdown("<div style='height: 5px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
 
 # Texto logo abaixo da logo, mas ainda perto
 sidebar.markdown("### Carregue o espectro FTIR para análise", unsafe_allow_html=True)
