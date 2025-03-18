@@ -14,6 +14,9 @@ sidebar = st.sidebar
 logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
+# Adicionar instruções para o usuário
+sidebar.markdown("Por favor, carregue um arquivo CSV contendo os dados FTIR para análise.")
+
 # Widget de upload de arquivo na barra lateral
 uploaded_file = sidebar.file_uploader('Use um arquivo CSV (separado por vírgula)', type="csv")
 
@@ -80,7 +83,7 @@ if uploaded_file is not None:
         if st.button('Continuar'):
             st.session_state.show_button = False  # Ocultar mensagem e botão após o clique
 
-    # Exibir o gráfico de barras apenas após o botão ser pressionado
+    # Exibir o gráfico de barras ou pizza apenas após o botão ser pressionado
     if not st.session_state.show_button:
         
         # Carregar os modelos treinados
@@ -117,28 +120,15 @@ if uploaded_file is not None:
         else:
             cores = ['gray', 'green']  # Cinza para Brucelose, Verde para Controle
     
-        # Exibir o gráfico de barras
-        with col1:
-            fig, ax = plt.subplots(figsize=(5, 3))
-            
-            # Criar gráfico de barras horizontais
-            ax.barh(classes, [probabilidade_bru, probabilidade_controle], color=cores)
-            
-            # Configuração do gráfico
-            ax.set_xlabel('Probabilidade (%)', fontsize=12)
-            ax.set_title('Distribuição das Probabilidades', fontsize=14)
-            ax.set_xlim(0, 100)
-            
-            # Adicionar rótulos de porcentagem nas barras
-            for i, v in enumerate([probabilidade_bru, probabilidade_controle]):
-                ax.text(v + 2, i, f"{v:.2f}%", color='white', va='center', fontsize=10)
-            
-            # Exibir gráfico no Streamlit
-            st.pyplot(fig)
+        # Exibir gráfico de pizza com as probabilidades
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.pie([probabilidade_bru, probabilidade_controle], labels=classes, autopct='%1.2f%%', startangle=90, colors=cores)
+        ax.set_title('Distribuição das Probabilidades', fontsize=14)
+        st.pyplot(fig)
 
-            # Exibir a classe predita junto com as probabilidades
-            classe_predita = classes[np.argmax(prob)]  # Classe com maior probabilidade
-            st.write(f"Diagnóstico: {classe_predita}")
+        # Exibir a classe predita junto com as probabilidades
+        classe_predita = classes[np.argmax(prob)]  # Classe com maior probabilidade
+        st.write(f"Diagnóstico: {classe_predita}")
 
 else:
     st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina</h1>''', unsafe_allow_html=True)
