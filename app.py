@@ -14,98 +14,133 @@ sidebar = st.sidebar
 logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
-# Ajuste do espaçamento menor entre a logo e o botão de upload
-# sidebar.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
+# Widget de upload de arquivo na barra lateral
+uploaded_file = sidebar.file_uploader('Use um arquivo CSV (separado por vírgula)', type="csv")
 
-# Botão de upload
-uploaded_file = sidebar.file_uploader("", type="csv")
+# Inicializar a variável de estado para exibir o botão e a mensagem
+if "show_button" not in st.session_state:
+    st.session_state.show_button = True
 
-# Criar abas
-tab1, tab2 = st.tabs(["Diagnóstico Binário", "Diagnóstico Multiclasse"])
-
-with tab1:
-    st.markdown("## Diagnóstico de Brucelose Bovina 🐄")  # 🔹 **Título sempre visível**
-    
-with tab2:
-    st.markdown("## Outra Análise 🔬")  # 🔹 **Título sempre visível**
-
+# Verifica se um arquivo foi carregado
 if uploaded_file is not None:
-    def carregar_dados(uploaded_file):
-        """Carrega e interpola os dados do arquivo CSV."""
-        dataframe = pd.read_csv(uploaded_file, header=0, index_col=0, delimiter=',',
-                                names=['Número de Onda', 'Transmitância'])
+    # Ler o conteúdo do arquivo em um DataFrame
+    dataframe = pd.read_csv(uploaded_file, header=0, index_col=0, delimiter=',',
+                            names=['Número de Onda', 'Transmitância'])
 
-        new_index = np.arange(round(dataframe.index[0]), round(dataframe.index[-1]) + 0.5, 0.5)
-        dados_interp = pd.DataFrame(index=new_index)
-        dados_interp.index.name = dataframe.index.name
+    # Interpolação de dados oriundos de Agilent
+    def interp(df, new_index):
+        df_out = pd.DataFrame(index=new_index)
+        df_out.index.name = df.index.name
+        for colname, col in df.items():
+            df_out[colname] = np.interp(new_index, df.index, col)
+        return df_out
 
-        for colname, col in dataframe.items():
-            dados_interp[colname] = np.interp(new_index, dataframe.index, col)
+    new_index = np.arange(round(dataframe.index[0]), round(dataframe.index[-1]) + 0.5, 0.5)
+    dados = interp(dataframe, new_index)
+    dados.sort_index(ascending=False, inplace=True)
 
-        dados_interp.sort_index(ascending=False, inplace=True)
-        return dados_interp.loc[1800:900]
+    # Filtrar a faixa de 1800 a 900
+    dados_coletados = dados.loc[1800:900]
 
-    def exibir_grafico(dados, titulo):
-        """Exibe um gráfico do espectro FTIR."""
+    # Exibir as primeiras cinco linhas do DataFrame na barra lateral
+    sidebar.write('Arquivo Carregado!')
+    sidebar.dataframe(dados_coletados.head(5))
+
+    # Criar colunas para o gráfico e resultados
+    col1 = st.columns(1)[0]  # Pegando a primeira (e única) coluna
+
+    # Exibir um gráfico de linhas com os dados filtrados na primeira coluna
+    with col1:
         fig = plt.figure(figsize=(13, 6))
         plt.style.use("cyberpunk")
-        plt.plot(dados, lw=2, color='green')
+
+        # Criar sua linha
+        plt.plot(dados_coletados, lw=2, color='green')  # Linha na cor verde
+
+        # Adicionar efeitos de brilho
         mplcyberpunk.add_glow_effects()
 
-        # Formatação
+        # Formatação do gráfico
         plt.gca().invert_xaxis()
-        plt.title(titulo, pad=10, fontsize=30, fontname='Cambria')
+        plt.title('Espectro FTIR', pad=10, fontsize=30, fontname='Cambria')
         plt.xlabel('Número de Onda ($\mathregular{cm^-¹}$)', labelpad=17, fontsize=26, fontname='Cambria')
         plt.ylabel('Transmitância Normalizada', labelpad=15, fontsize=28, fontname='Cambria')
         plt.xticks(np.arange(900, 1800 + 100, 100), fontsize=18, fontname='Cambria')
+        plt.gca().tick_params(axis='x', pad=20)  # Ajusta o espaço entre os rótulos e a linha
         plt.xlim(1800, 900)
-        plt.ylim(dados.min().min() - 0.5, 100.5)
+        plt.ylim(dados_coletados.min().min() - 0.5, 100.5)
+        plt.yticks(fontsize=18, fontname='Cambria')
+        plt.gca().tick_params(axis='y', pad=20)  # Ajusta o espaço entre os rótulos e a linha
         st.pyplot(fig)
 
-    def aplicar_modelo(dados):
-        """Aplica o modelo PCA + SVM e exibe a previsão."""
+    # Exibir a mensagem e o botão "Continuar" apenas se for permitido
+    if st.session_state.show_button:
+        st.info('Espectro medido corretamente! Clique em "continuar"')
+
+        if st.button('Continuar'):
+            st.session_state.show_button = False  # Ocultar mensagem e botão após o clique
+
+    # Exibir o gráfico de barras apenas após o botão ser pressionado
+    if not st.session_state.show_button:
+        
+        # Carregar os modelos treinados
         with open('pca.pkl', 'rb') as f:
             pca = pickle.load(f)
             
         with open('model.pkl', 'rb') as f:
             model = pickle.load(f)
 
+        # Pré-tratamento (Savitzky-Golay + Normalização)
         dados_intervalo = dados.loc[1500:900]
-        dados_filtrados = pd.DataFrame(savgol_filter(dados_intervalo, 27, 1, axis=0))
+        
+        dados_filtrados = pd.DataFrame(savgol_filter(dados_intervalo, 27, 1, axis = 0))
         dados_filtrados.index = dados_intervalo.index
 
         dados_centrados = dados_filtrados - dados_filtrados.mean()
-        dados_tratados = dados_centrados / dados_filtrados.std()
+        dados_tratados = dados_centrados / dados_centrados.std()
 
+        # Aplicar PCA
         X = np.transpose(dados_tratados)
         X_pca = pca.transform(X)
 
+        # Fazer previsões com SVM
         prob = model.predict_proba(X_pca)[0]
-        classes = ['Brucelose', 'Controle']
         
-        probabilidade_bru = prob[0] * 100
-        probabilidade_controle = prob[1] * 100
+        # Definir as classes e probabilidades
+        classes = ['Brucelose', 'Controle']
+        probabilidade_bru = prob[0] * 100  # Probabilidade de Brucelose
+        probabilidade_controle = prob[1] * 100       # Probabilidade de Controle
 
-        cores = ['red', 'gray'] if probabilidade_bru > probabilidade_controle else ['gray', 'green']
+        # Definir cores dinamicamente
+        if probabilidade_bru > probabilidade_controle:
+            cores = ['red', 'gray']  # Vermelho para Brucelose, Cinza para Controle
+        else:
+            cores = ['gray', 'green']  # Cinza para Brucelose, Verde para Controle
+    
+        # Exibir o gráfico de barras
+        with col1:
+            fig, ax = plt.subplots(figsize=(5, 3))
+            
+            # Criar gráfico de barras horizontais
+            ax.barh(classes, [probabilidade_bru, probabilidade_controle], color=cores)
+            
+            # Configuração do gráfico
+            ax.set_xlabel('Probabilidade (%)', fontsize=12)
+            ax.set_title('Distribuição das Probabilidades', fontsize=14)
+            ax.set_xlim(0, 100)
+            
+            # Adicionar rótulos de porcentagem nas barras
+            for i, v in enumerate([probabilidade_bru, probabilidade_controle]):
+                ax.text(v + 2, i, f"{v:.2f}%", color='white', va='center', fontsize=10)
+            
+            # Exibir gráfico no Streamlit
+            st.pyplot(fig)
 
-        fig, ax = plt.subplots(figsize=(5, 3))
-        ax.barh(classes, [probabilidade_bru, probabilidade_controle], color=cores)
-        ax.set_xlabel('Probabilidade (%)', fontsize=12)
-        ax.set_title('Distribuição das Probabilidades', fontsize=14)
-        ax.set_xlim(0, 100)
+            # Exibir a classe predita junto com as probabilidades
+            classe_predita = classes[np.argmax(prob)]  # Classe com maior probabilidade
+            st.write(f"Diagnóstico: {classe_predita}")
 
-        for i, v in enumerate([probabilidade_bru, probabilidade_controle]):
-            ax.text(v + 2, i, f"{v:.2f}%", color='white', va='center', fontsize=10)
-
-        st.pyplot(fig)
-        st.write(f"**Diagnóstico:** {classes[np.argmax(prob)]}")
-
-    dados = carregar_dados(uploaded_file)
-
-    with tab1:
-        exibir_grafico(dados, "Espectro FTIR - Diagnóstico de Brucelose")
-        aplicar_modelo(dados)
-
-    with tab2:
-        exibir_grafico(dados, "Espectro FTIR - Outra Análise")
-        # Aqui pode ser chamado outro modelo, se necessário
+else:
+    st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina</h1>''', unsafe_allow_html=True)
+    # Subtítulo (h3)
+    st.markdown('''<h3 style="color: white; font-size: 20px;">Carregue um espectro FTIR para análise</h3>''', unsafe_allow_html=True)
