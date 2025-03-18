@@ -17,6 +17,9 @@ sidebar.image(logo, use_container_width=True)
 # Adicionar espaço entre a logo e o botão de upload
 sidebar.markdown("<br><br>", unsafe_allow_html=True)
 
+# **Um único botão de upload para ambas as análises**
+uploaded_file = sidebar.file_uploader("Carregue o espectro FTIR para análise", type="csv")
+
 # Criar abas
 tab1, tab2 = st.tabs(["Diagnóstico de Brucelose", "Outra Análise"])
 
@@ -90,20 +93,15 @@ def aplicar_modelo(dados):
     st.pyplot(fig)
     st.write(f"**Diagnóstico:** {classes[np.argmax(prob)]}")
 
-with tab1:
-    st.markdown("## Diagnóstico de Brucelose 🐄")
-    uploaded_file_1 = sidebar.file_uploader("Carregue o espectro FTIR para Brucelose", type="csv", key="upload_1")
-    
-    if uploaded_file_1 is not None:
-        dados_brucelose = carregar_dados(uploaded_file_1)
-        exibir_grafico(dados_brucelose, "Espectro FTIR - Diagnóstico de Brucelose")
-        aplicar_modelo(dados_brucelose)
+if uploaded_file is not None:
+    dados = carregar_dados(uploaded_file)
 
-with tab2:
-    st.markdown("## Outra Análise 🔬")
-    uploaded_file_2 = sidebar.file_uploader("Carregue o espectro FTIR para outra análise", type="csv", key="upload_2")
+    with tab1:
+        st.markdown("## Diagnóstico de Brucelose 🐄")
+        exibir_grafico(dados, "Espectro FTIR - Diagnóstico de Brucelose")
+        aplicar_modelo(dados)
 
-    if uploaded_file_2 is not None:
-        dados_outro = carregar_dados(uploaded_file_2)
-        exibir_grafico(dados_outro, "Espectro FTIR - Outra Análise")
-        # Se houver outro modelo, ele pode ser chamado aqui com uma função diferente
+    with tab2:
+        st.markdown("## Outra Análise 🔬")
+        exibir_grafico(dados, "Espectro FTIR - Outra Análise")
+        # Aqui pode ser chamado outro modelo, se necessário
