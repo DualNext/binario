@@ -14,6 +14,9 @@ sidebar = st.sidebar
 logo = 'logo.png'  # Substitua pelo caminho correto para o seu logo
 sidebar.image(logo, use_container_width=True)
 
+# Adicionar espaço entre a logo e o botão de upload
+sidebar.markdown("<br><br>", unsafe_allow_html=True)
+
 # Criar abas
 tab1, tab2 = st.tabs(["Diagnóstico de Brucelose", "Outra Análise"])
 
@@ -89,7 +92,7 @@ def aplicar_modelo(dados):
 
 with tab1:
     st.markdown("## Diagnóstico de Brucelose 🐄")
-    uploaded_file_1 = st.file_uploader("Carregue o espectro FTIR para Brucelose", type="csv", key="upload_1")
+    uploaded_file_1 = sidebar.file_uploader("Carregue o espectro FTIR para Brucelose", type="csv", key="upload_1")
     
     if uploaded_file_1 is not None:
         dados_brucelose = carregar_dados(uploaded_file_1)
@@ -98,7 +101,7 @@ with tab1:
 
 with tab2:
     st.markdown("## Outra Análise 🔬")
-    uploaded_file_2 = st.file_uploader("Carregue o espectro FTIR para outra análise", type="csv", key="upload_2")
+    uploaded_file_2 = sidebar.file_uploader("Carregue o espectro FTIR para outra análise", type="csv", key="upload_2")
 
     if uploaded_file_2 is not None:
         dados_outro = carregar_dados(uploaded_file_2)
