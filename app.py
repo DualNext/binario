@@ -18,7 +18,7 @@ sidebar.image(logo, use_container_width=True)
 sidebar.markdown("<div style='height: 5px;'></div>", unsafe_allow_html=True)  # Menor espaçamento
 
 # Texto logo abaixo da logo, mas ainda perto
-sidebar.markdown("### Carregue o espectro FTIR para análise", unsafe_allow_html=True)
+# sidebar.markdown("### Carregue o espectro FTIR para análise", unsafe_allow_html=True)
 
 # Botão de upload
 uploaded_file = sidebar.file_uploader("", type="csv")
