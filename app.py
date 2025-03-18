@@ -123,10 +123,6 @@ if uploaded_file is not None:
         ax.set_title('Probabilidades de Diagnóstico', fontsize=14)
         st.pyplot(fig)
 
-        # Exibir a classe predita junto com as probabilidades
-        classe_predita = classes[np.argmax(prob)]  # Classe com maior probabilidade
-        st.write(f"Diagnóstico: {classe_predita}")
-
 else:
     st.markdown('''<h1 style="color: orange; font-size: 35px;">Diagnóstico de Brucelose Bovina</h1>''', unsafe_allow_html=True)
     # Subtítulo (h3)
