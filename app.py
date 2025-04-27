@@ -113,7 +113,7 @@ if uploaded_file is not None:
 
         # Definir cores dinamicamente
         if probabilidade_bru > probabilidade_controle:
-            cores = ['##800000', 'gray']  # Vermelho para Brucelose, Cinza para Controle
+            cores = ['#800000', 'gray']  # Vermelho para Brucelose, Cinza para Controle
         else:
             cores = ['gray', 'green']  # Cinza para Brucelose, Verde para Controle
     
